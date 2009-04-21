@@ -1,6 +1,10 @@
 <% activity_fields = TimeEntryActivityCustomField.find(:all, :conditions => ['field_format IN (?)', ['list','bool']]) %>
 
 <fieldset>
+<div id="hide-if-js" class="flash error">
+  Please enable JavaScript, this page will not function without it.
+</div>
+<%= javascript_tag("$('hide-if-js').hide();") %>
 
 <p>
   <label><%= l(:overhead_field_billing_status) %></label>
