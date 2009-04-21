@@ -11,7 +11,8 @@ describe OverheadTimeEntryActivityController, "#index as non-admin" do
                         :language => :en,
                         :anonymous? => false,
                         :name => 'Test user',
-                        :projects => Project
+                        :projects => Project,
+                        :allowed_to? => false
                         )
     end
   end
