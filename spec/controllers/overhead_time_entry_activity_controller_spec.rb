@@ -53,6 +53,11 @@ describe OverheadTimeEntryActivityController, "#index as admin in js format" do
     assigns[:values].should be_empty
   end
 
+  it 'should handle not finding the Time Entry Activity gracefully' do
+    get :index, :custom_field => -10
+    response.should be_success
+  end
+
   it 'should render the values partial' do
     get :index
     response.should render_template('overhead_time_entry_activity/_values')
@@ -61,7 +66,7 @@ describe OverheadTimeEntryActivityController, "#index as admin in js format" do
   describe 'with a list custom_field parameter' do
     before(:each) do
       @custom_field = mock_model(TimeEntryActivityCustomField, :possible_values => ['A','B','Nil'], :field_format => 'list')
-      TimeEntryActivityCustomField.stub!(:find).and_return(@custom_field)
+      TimeEntryActivityCustomField.stub!(:find_by_id).and_return(@custom_field)
     end
   
     it 'should assign values to the possible values of the field' do
@@ -70,7 +75,7 @@ describe OverheadTimeEntryActivityController, "#index as admin in js format" do
     end
   
     it 'should find the Billing Status field based on the selected custom_field' do
-      TimeEntryActivityCustomField.should_receive(:find).with(@custom_field.id.to_s).and_return(@custom_field)
+      TimeEntryActivityCustomField.should_receive(:find_by_id).with(@custom_field.id.to_s).and_return(@custom_field)
       get :index, :custom_field => @custom_field.id
     end
 
@@ -85,7 +90,7 @@ describe OverheadTimeEntryActivityController, "#index as admin in js format" do
   describe 'with a boolean custom_field parameter' do
     before(:each) do
       @custom_field = mock_model(TimeEntryActivityCustomField, :field_format => 'bool')
-      TimeEntryActivityCustomField.stub!(:find).and_return(@custom_field)
+      TimeEntryActivityCustomField.stub!(:find_by_id).and_return(@custom_field)
     end
   
     it 'should assign values to the possible values of the field' do
@@ -94,7 +99,7 @@ describe OverheadTimeEntryActivityController, "#index as admin in js format" do
     end
   
     it 'should find the Billing Status field based on the selected custom_field' do
-      TimeEntryActivityCustomField.should_receive(:find).with(@custom_field.id.to_s).and_return(@custom_field)
+      TimeEntryActivityCustomField.should_receive(:find_by_id).with(@custom_field.id.to_s).and_return(@custom_field)
       get :index, :custom_field => @custom_field.id
     end
 

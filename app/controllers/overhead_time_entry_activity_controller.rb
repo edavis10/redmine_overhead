@@ -5,7 +5,7 @@ class OverheadTimeEntryActivityController < ApplicationController
   
   def index
     if params[:custom_field]
-      @field = TimeEntryActivityCustomField.find(params[:custom_field])
+      @field = TimeEntryActivityCustomField.find_by_id(params[:custom_field])
       @values = select_values_for_field(@field)
     end
     @values ||= []
@@ -18,6 +18,8 @@ class OverheadTimeEntryActivityController < ApplicationController
   private
   
   def select_values_for_field(field)
+    return [] if field.nil?
+
     if field.field_format == 'list'
       returning [] do |r|
         field.possible_values.each do |item|
