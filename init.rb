@@ -1,5 +1,12 @@
 require 'redmine'
 
+# Patches to the Redmine core.
+require 'dispatcher'
+require 'overhead_time_entry_activity_patch'
+Dispatcher.to_prepare do
+  TimeEntryActivity.send(:include, OverheadTimeEntryActivityPatch)
+end
+
 Redmine::Plugin.register :redmine_overhead do
   name 'Overhead plugin'
   author 'Eric Davis'
