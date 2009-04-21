@@ -1,0 +1,22 @@
+<% activity_fields = TimeEntryActivityCustomField.find :all %>
+
+<fieldset>
+
+<p>
+  <label><%= l(:overhead_field_billing_status) %></label>
+  <%= select_tag('setting[custom_field]',
+                 '<option value="">(Select one)</option>' +
+                 options_from_collection_for_select(activity_fields, :id, :name, @settings['custom_field'].to_i)) %>
+</p>
+
+<p>
+  <label><%= l(:overhead_field_billable_value) %></label>
+  TODO
+</p>
+
+<p>
+  <label><%= l(:overhead_field_overhead_value) %></label>
+  TODO
+</p>
+
+</fieldset>

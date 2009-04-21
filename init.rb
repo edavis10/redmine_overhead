@@ -10,4 +10,11 @@ Redmine::Plugin.register :redmine_overhead do
 
   requires_redmine :version_or_higher => '0.8.0'
 
+
+  settings :default => {
+    'custom_field' => nil,
+    'billable_value' => nil,
+    'overhead_value' => nil
+  }, :partial => 'settings/overhead_settings'
+
 end
