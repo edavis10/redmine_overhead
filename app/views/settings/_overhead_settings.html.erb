@@ -1,4 +1,4 @@
-<% activity_fields = TimeEntryActivityCustomField.find :all %>
+<% activity_fields = TimeEntryActivityCustomField.find(:all, :conditions => ['field_format IN (?)', ['list','bool']]) %>
 
 <fieldset>
 
