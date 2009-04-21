@@ -9,6 +9,8 @@ class OverheadTimeEntryActivityController < ApplicationController
       @values = select_values_for_field(@field)
     end
     @values ||= []
+
+    @selected = params[:selected] || ''
     
     render :partial => 'values'
   end

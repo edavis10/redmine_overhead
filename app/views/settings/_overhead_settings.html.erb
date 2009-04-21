@@ -4,19 +4,55 @@
 
 <p>
   <label><%= l(:overhead_field_billing_status) %></label>
-  <%= select_tag('setting[custom_field]',
+  <%= select_tag('settings[custom_field]',
                  '<option value="">(Select one)</option>' +
                  options_from_collection_for_select(activity_fields, :id, :name, @settings['custom_field'].to_i)) %>
 </p>
 
 <p>
   <label><%= l(:overhead_field_billable_value) %></label>
-  TODO
+  <%= select_tag('settings[billable_value]', '') %>
 </p>
 
 <p>
   <label><%= l(:overhead_field_overhead_value) %></label>
-  TODO
+  <%= select_tag('settings[overhead_value]', '') %>
 </p>
 
 </fieldset>
+
+<%# TODO: optimize JavaScript below to not use multiple requests. %>
+
+<%= observe_field(:settings_custom_field,
+                  :url => { :controller => 'overhead_time_entry_activity', :action => 'index'},
+                  :with => 'custom_field',
+                  :update => :settings_billable_value) %>
+
+<%= observe_field(:settings_custom_field,
+                  :url => { :controller => 'overhead_time_entry_activity', :action => 'index'},
+                  :with => 'custom_field',
+                  :update => :settings_overhead_value) %>
+
+<script type="text/javascript">
+//<![CDATA[
+  function loadOverheadValues() {
+    new Ajax.Updater('settings_billable_value',
+                     '/overhead_time_entry_activity',
+                     { 
+                       asynchronous:true,
+                       evalScripts:true,
+                       parameters:'custom_field=' + encodeURIComponent($('settings_custom_field').value) + '&selected=' + encodeURIComponent('<%= @settings['billable_value'] %>')
+                     });
+
+    new Ajax.Updater('settings_overhead_value',
+                     '/overhead_time_entry_activity',
+                     { 
+                       asynchronous:true,
+                       evalScripts:true,
+                       parameters:'custom_field=' + encodeURIComponent($('settings_custom_field').value) + '&selected=' + encodeURIComponent('<%= @settings['overhead_value'] %>')
+                     });
+  }
+
+  Event.observe(window, 'load', function() { loadOverheadValues() });
+//]]>
+</script>
