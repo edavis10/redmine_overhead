@@ -96,16 +96,17 @@ describe TimeEntryActivity, '#billable_custom_field' do
   end
 end
 
-describe TimeEntryActivity, '#find_with_billable_values' do
+describe TimeEntryActivity, '#find_billable_activities' do
   before(:each) do
     TimeEntryActivity.stub!(:overhead_configured?).and_return(true)
+    TimeEntryActivity.stub!(:billable_value_configured?).and_return(true)
   end
 
   it 'should return nothing if none are found' do
-    TimeEntryActivity.find_with_billable_values.should be_empty
+    TimeEntryActivity.find_billable_activities.should be_empty
   end
 
-  it 'should return the time entry activities with the specified billable value' do
+  it 'should return the billable time entry activities' do
     custom_field = mock_model(TimeEntryActivityCustomField,
                                :possible_values => ['A','B','Nil'],
                                :field_format => 'list')
@@ -114,7 +115,31 @@ describe TimeEntryActivity, '#find_with_billable_values' do
     activities = [mock_model(TimeEntryActivity), mock_model(TimeEntryActivity)]
     TimeEntryActivity.should_receive(:find).and_return(activities)
     
-    response = TimeEntryActivity.find_with_billable_values(['A','B'])
+    response = TimeEntryActivity.find_billable_activities
+    response.should eql(activities)
+  end
+end
+
+describe TimeEntryActivity, '#find_overhead_activities' do
+  before(:each) do
+    TimeEntryActivity.stub!(:overhead_configured?).and_return(true)
+    TimeEntryActivity.stub!(:overhead_value_configured?).and_return(true)
+  end
+
+  it 'should return nothing if none are found' do
+    TimeEntryActivity.find_overhead_activities.should be_empty
+  end
+
+  it 'should return the overhead time entry activities' do
+    custom_field = mock_model(TimeEntryActivityCustomField,
+                               :possible_values => ['A','B','Nil'],
+                               :field_format => 'list')
+    TimeEntryActivity.stub!(:billable_custom_field).and_return(custom_field)
+
+    activities = [mock_model(TimeEntryActivity), mock_model(TimeEntryActivity)]
+    TimeEntryActivity.should_receive(:find).and_return(activities)
+    
+    response = TimeEntryActivity.find_overhead_activities
     response.should eql(activities)
   end
 end

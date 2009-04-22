@@ -24,20 +24,49 @@ module OverheadTimeEntryActivityPatch
       Setting['plugin_redmine_overhead'] && Setting['plugin_redmine_overhead']['custom_field']
     end
 
-    def find_with_billable_values(values = [])
+    def billable_value_configured?
+      Setting['plugin_redmine_overhead']['billable_value']
+    end
+    
+    def overhead_value_configured?
+      Setting['plugin_redmine_overhead']['overhead_value']
+    end
+
+    def find_billable_activities
       return [] unless overhead_configured?
+      return [] unless billable_value_configured?
 
       billable_field = TimeEntryActivity.billable_custom_field
       if billable_field
+        value = Setting['plugin_redmine_overhead']['billable_value'] == 'true' # convert "true" to true...
         finder = ARCondition.new
         finder.add "#{CustomValue.table_name}.customized_type = '#{TimeEntryActivity.class_name}'"
         finder.add ["#{CustomValue.table_name}.custom_field_id = ?", billable_field.id]
-        finder.add ["#{CustomValue.table_name}.value IN (?)", values]
+        finder.add ["#{CustomValue.table_name}.value IN (?)", value]
+        return TimeEntryActivity.find(:all, :include => :custom_values, :conditions => finder.conditions)
+      else
+        return []
+      end
+      
+    end
+
+    def find_overhead_activities
+      return [] unless overhead_configured?
+      return [] unless overhead_value_configured?
+
+      billable_field = TimeEntryActivity.billable_custom_field
+      if billable_field
+        value = Setting['plugin_redmine_overhead']['overhead_value'] == 'true' # convert "true" to true...
+        finder = ARCondition.new
+        finder.add "#{CustomValue.table_name}.customized_type = '#{TimeEntryActivity.class_name}'"
+        finder.add ["#{CustomValue.table_name}.custom_field_id = ?", billable_field.id]
+        finder.add ["#{CustomValue.table_name}.value IN (?)", value]
         
         return TimeEntryActivity.find(:all, :include => :custom_values, :conditions => finder.conditions)
       else
         return []
       end
+      
     end
   end
   

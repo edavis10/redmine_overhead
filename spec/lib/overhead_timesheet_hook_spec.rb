@@ -63,37 +63,25 @@ describe OverheadTimesheetHook, "#plugin_timesheet_views_timesheet_form", :type 
     response.should have_tag('select[name=?][multiple=multiple]', 'timesheet[billable][]')
   end
 
-  it 'should populate the select field with the possible options of the custom data field' do
-    @custom_field = mock_model(TimeEntryActivityCustomField,
-                               :possible_values => ['A','B','Nil'],
-                               :field_format => 'list')
-    TimeEntryActivity.should_receive(:billable_custom_field).and_return(@custom_field)
-    
+  it 'should populate the select field with "Billable" and "Overhead" options' do
     response = call_hook(:plugin_timesheet_views_timesheet_form, {})
     response.should have_tag('select') do
-      with_tag('option[value=?]','A','A')
-      with_tag('option[value=?]','B','B')
-      with_tag('option[value=?]','Nil','none')
+      with_tag('option[value=?]','billable','Billable')
+      with_tag('option[value=?]','overhead','Overhead')
     end
   end
   
   it 'should pre-select the values from the submission' do
-    @custom_field = mock_model(TimeEntryActivityCustomField,
-                               :possible_values => ['A','B','Nil'],
-                               :field_format => 'list')
-    TimeEntryActivity.stub!(:billable_custom_field).and_return(@custom_field)
-
     context = {
-      :params => {:timesheet => {:billable => ['A','Nil']}}
+      :params => {:timesheet => {:billable => ['overhead']}}
     }
 
     response = call_hook(:plugin_timesheet_views_timesheet_form, context)
+
     response.should have_tag('select') do
-      with_tag('option[value=?][selected=selected]','A','A')
-      with_tag('option[value=?]','B','B')
-      with_tag('option[value=?][selected=selected]','Nil','none')
+      with_tag('option[value=?]','billable','Billable')
+      with_tag('option[value=?][selected=selected]','overhead','Overhead')
     end
-    
   end
 end
 
@@ -111,32 +99,52 @@ describe OverheadTimesheetHook, "#plugin_timesheet_controller_report_pre_fetch_t
     call_hook(:plugin_timesheet_controller_report_pre_fetch_time_entries, context)
   end
 
-  
-  it 'should change the activity list based on the values submitted' do
-    custom_field = mock_model(TimeEntryActivityCustomField,
-                               :possible_values => ['A','B','Nil'],
-                               :field_format => 'list')
-    TimeEntryActivity.stub!(:billable_custom_field).and_return(custom_field)
 
-    activities = [
-                  mock_model(TimeEntryActivity, :id => 100),
-                  mock_model(TimeEntryActivity, :id => 201),
-                  mock_model(TimeEntryActivity, :id => 342)
-                  ]
-    
-    TimeEntryActivity.should_receive(:find_with_billable_values).with(['A','Nil']).and_return(activities)    
-    
-    @timesheet.should_receive(:activities=).with([100,201,342])
-    context = {
-      :timesheet => @timesheet,
-      :params =>
-      {
-        :timesheet => {
-          :billable => ['A','Nil']
+  describe 'should change the activities' do
+    before(:each) do
+      @billable_activities = [
+                              mock_model(TimeEntryActivity, :id => 100),
+                              mock_model(TimeEntryActivity, :id => 201),
+                              mock_model(TimeEntryActivity, :id => 342)
+                             ]
+      @overhead_activities = [
+                              mock_model(TimeEntryActivity, :id => 102),
+                              mock_model(TimeEntryActivity, :id => 202),
+                              mock_model(TimeEntryActivity, :id => 344)
+                             ]
+    end
+
+    def call_hook_with_billable_options(options = [])
+      context = {
+        :timesheet => @timesheet,
+        :params =>
+        {
+          :timesheet => {
+            :billable => options
+          }
         }
       }
-    }
-    call_hook(:plugin_timesheet_controller_report_pre_fetch_time_entries, context)
+      call_hook(:plugin_timesheet_controller_report_pre_fetch_time_entries, context)
+    end
+    
+    it 'to only the billable activities when "billable" is selected' do
+      TimeEntryActivity.should_receive(:find_billable_activities).and_return(@billable_activities)
+      @timesheet.should_receive(:activities=).with([100,201,342])
+      call_hook_with_billable_options(['billable'])
+    end
+
+    it 'to only the overhead activities when "overhead" is selected' do
+      TimeEntryActivity.should_receive(:find_overhead_activities).and_return(@overhead_activities)
+      @timesheet.should_receive(:activities=).with([102,202,344])
+      call_hook_with_billable_options(['overhead'])
+    end
+
+    it 'to all activities when "billable" and "overhead" is selected' do
+      TimeEntryActivity.should_receive(:find_billable_activities).and_return(@billable_activities)
+      TimeEntryActivity.should_receive(:find_overhead_activities).and_return(@overhead_activities)
+      @timesheet.should_receive(:activities=).with([100,102,201,202,342,344])
+      call_hook_with_billable_options(['billable','overhead'])
+    end
 
   end
 end

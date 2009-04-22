@@ -23,7 +23,6 @@ class OverheadTimesheetHook < Redmine::Hook::ViewListener
 
   # Added a new field for filtering based on "billable?"
   def plugin_timesheet_views_timesheet_form(context={})
-    billable_values = select_values_for_field(TimeEntryActivity.billable_custom_field)
     if context[:params] &&
         context[:params][:timesheet] &&
         context[:params][:timesheet][:billable]
@@ -37,15 +36,24 @@ class OverheadTimesheetHook < Redmine::Hook::ViewListener
                               :layout => false,
                               :locals => {
                                 :list_size => context[:list_size] || 5,
-                                :billable_values => billable_values,
                                 :selected_values => selected_values
                               })
   end
 
   def plugin_timesheet_controller_report_pre_fetch_time_entries(context = {})
     if context[:params] && context[:params][:timesheet] && context[:params][:timesheet][:billable]
-      activities = TimeEntryActivity.find_with_billable_values(context[:params][:timesheet][:billable])
-      context[:timesheet].activities = activities.collect(&:id) unless activities.empty?
+      billable_options = context[:params][:timesheet][:billable]
+      activities = []
+
+      if billable_options.include?("billable")
+        activities << TimeEntryActivity.find_billable_activities
+      end
+
+      if billable_options.include?("overhead")
+        activities << TimeEntryActivity.find_overhead_activities
+      end
+
+      context[:timesheet].activities = activities.flatten.uniq.compact.collect(&:id).sort unless activities.empty?
     end
   end
 end
