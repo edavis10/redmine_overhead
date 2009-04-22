@@ -1,5 +1,10 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
+# Hack to make RSpec play nicely with call_hook's default contexts
+def stub_view_to_use_controller_instance
+  self.stub!(:controller).and_return(@controller)
+end
+
 describe OverheadTimesheetHook, "#plugin_timesheet_views_timesheet_group_header" do
   it 'should add a Billable column to the table' do
     OverheadTimesheetHook.instance.plugin_timesheet_views_timesheet_group_header.should eql('<th>Billable</th>')
@@ -39,4 +44,20 @@ describe OverheadTimesheetHook, "#plugin_timesheet_views_timesheet_time_entry" d
       with_tag('img[src*=?]','true.png')
     end
   end
+end
+
+describe OverheadTimesheetHook, "#plugin_timesheet_views_timesheet_form", :type => :view do
+  include Redmine::Hook::Helper
+
+  before(:each) do
+    stub_view_to_use_controller_instance
+  end
+  
+  it 'should add a "Billable" label' do
+    response = call_hook(:plugin_timesheet_views_timesheet_form, {})
+    response.should have_tag('label[class=?][for=?]', 'select_all', 'timesheet[billable][]')
+  end
+
+  it 'should add a multple select field called "billable"'
+  it 'should pre-select the values from the submission'
 end

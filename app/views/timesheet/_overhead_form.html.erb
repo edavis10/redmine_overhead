@@ -1,0 +1,8 @@
+<p>
+  <label for="timesheet[billable][]" class="select_all">
+    <%= l(:overhead_field_billing_status) %>
+  </label>
+  <br />
+  <%= select_tag('timesheet[billable][]','', {:multiple => true, :size => list_size}) %>
+
+</p>
