@@ -58,6 +58,10 @@ describe OverheadTimesheetHook, "#plugin_timesheet_views_timesheet_form", :type 
     response.should have_tag('label[class=?][for=?]', 'select_all', 'timesheet[billable][]')
   end
 
-  it 'should add a multple select field called "billable"'
+  it 'should add a multple select field called "billable"' do
+    response = call_hook(:plugin_timesheet_views_timesheet_form, {})
+    response.should have_tag('select[name=?][multiple=multiple]', 'timesheet[billable][]')
+  end
+
   it 'should pre-select the values from the submission'
 end

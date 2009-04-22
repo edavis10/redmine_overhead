@@ -22,6 +22,11 @@ class OverheadTimesheetHook < Redmine::Hook::ViewListener
 
   # Added a new field for filtering based on "billable?"
   def plugin_timesheet_views_timesheet_form(context={})
-    context[:controller].send(:render_to_string, :partial => 'timesheet/overhead_form', :layout => false)
+    context[:controller].send(:render_to_string,
+                              :partial => 'timesheet/overhead_form',
+                              :layout => false,
+                              :locals => {
+                                :list_size => context[:list_size] || 5
+                              })
   end
 end
