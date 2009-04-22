@@ -39,6 +39,7 @@ module OverheadTimeEntryActivityPatch
       return false unless field
       
       custom_value = self.custom_value_for(field)
+      return false unless custom_value
       
       if field.field_format == 'bool'
         # Map string values to proper booleans
