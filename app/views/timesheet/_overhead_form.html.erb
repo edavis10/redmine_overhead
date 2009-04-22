@@ -3,6 +3,8 @@
     <%= l(:overhead_field_billing_status) %>
   </label>
   <br />
-  <%= select_tag('timesheet[billable][]','', {:multiple => true, :size => list_size}) %>
+  <%= select_tag('timesheet[billable][]',
+                 options_for_select(billable_values),
+                 {:multiple => true, :size => list_size}) %>
 
 </p>

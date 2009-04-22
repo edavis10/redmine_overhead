@@ -1,4 +1,5 @@
 class OverheadTimesheetHook < Redmine::Hook::ViewListener
+  include OverheadHelper
 
   # Adds a table header "Billable" to the report results
   def plugin_timesheet_views_timesheet_group_header(context={})
@@ -22,11 +23,13 @@ class OverheadTimesheetHook < Redmine::Hook::ViewListener
 
   # Added a new field for filtering based on "billable?"
   def plugin_timesheet_views_timesheet_form(context={})
+    billable_values = select_values_for_field(TimeEntryActivity.billable_custom_field)
     context[:controller].send(:render_to_string,
                               :partial => 'timesheet/overhead_form',
                               :layout => false,
                               :locals => {
-                                :list_size => context[:list_size] || 5
+                                :list_size => context[:list_size] || 5,
+                                :billable_values => billable_values
                               })
   end
 end
