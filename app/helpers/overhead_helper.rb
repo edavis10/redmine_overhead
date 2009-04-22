@@ -14,7 +14,7 @@ module OverheadHelper
         r
       end
     elsif field.field_format == 'bool'
-      return [[true,true],[false,false]]
+      return [['true','true'],['false','false']]
     end
   end
 end
