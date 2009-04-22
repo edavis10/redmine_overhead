@@ -13,14 +13,23 @@ module OverheadTimeEntryActivityPatch
   end
   
   module ClassMethods
-    
+    # Returns the CustomField used for tracking Billable activities
+    def billable_custom_field
+      if overhead_configured?
+        TimeEntryActivityCustomField.find_by_id(Setting['plugin_redmine_overhead']['custom_field'])
+      end      
+    end
+
+    def overhead_configured?
+      Setting['plugin_redmine_overhead'] && Setting['plugin_redmine_overhead']['custom_field']
+    end
   end
   
   module InstanceMethods
     # Is the Activity Billable, based on it's custom data?
     def billable?
       if overhead_configured?
-        billable_field = TimeEntryActivityCustomField.find_by_id(Setting['plugin_redmine_overhead']['custom_field'])
+        billable_field = TimeEntryActivity.billable_custom_field
         return field_equals_the_configured_billable_field?(billable_field)
       else
         return false
@@ -30,7 +39,7 @@ module OverheadTimeEntryActivityPatch
     private
 
     def overhead_configured?
-      Setting['plugin_redmine_overhead'] && Setting['plugin_redmine_overhead']['custom_field']
+      TimeEntryActivity.overhead_configured?
     end
 
     # Checks if the field's value equals the  configured billable

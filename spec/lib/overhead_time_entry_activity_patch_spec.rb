@@ -75,3 +75,23 @@ describe TimeEntryActivity, 'billable?' do
   end
 
 end
+
+
+describe TimeEntryActivity, '#billable_custom_field' do
+  describe 'with overhead not configured' do
+    it 'should return nil' do
+      TimeEntryActivity.should_receive(:overhead_configured?).and_return(false)
+      TimeEntryActivity.billable_custom_field.should be_nil
+    end
+  end
+
+  describe 'with overhead configured' do
+    it 'should return the custom field used to track Billable' do
+      TimeEntryActivity.should_receive(:overhead_configured?).and_return(true)
+      custom_field = mock_model(TimeEntryActivityCustomField)
+      TimeEntryActivityCustomField.should_receive(:find_by_id).and_return(custom_field)
+
+      TimeEntryActivity.billable_custom_field.should eql(custom_field)
+    end
+  end
+end
