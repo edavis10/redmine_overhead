@@ -95,3 +95,26 @@ describe TimeEntryActivity, '#billable_custom_field' do
     end
   end
 end
+
+describe TimeEntryActivity, '#find_with_billable_values' do
+  before(:each) do
+    TimeEntryActivity.stub!(:overhead_configured?).and_return(true)
+  end
+
+  it 'should return nothing if none are found' do
+    TimeEntryActivity.find_with_billable_values.should be_empty
+  end
+
+  it 'should return the time entry activities with the specified billable value' do
+    custom_field = mock_model(TimeEntryActivityCustomField,
+                               :possible_values => ['A','B','Nil'],
+                               :field_format => 'list')
+    TimeEntryActivity.stub!(:billable_custom_field).and_return(custom_field)
+
+    activities = [mock_model(TimeEntryActivity), mock_model(TimeEntryActivity)]
+    TimeEntryActivity.should_receive(:find).and_return(activities)
+    
+    response = TimeEntryActivity.find_with_billable_values(['A','B'])
+    response.should eql(activities)
+  end
+end

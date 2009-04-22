@@ -23,6 +23,22 @@ module OverheadTimeEntryActivityPatch
     def overhead_configured?
       Setting['plugin_redmine_overhead'] && Setting['plugin_redmine_overhead']['custom_field']
     end
+
+    def find_with_billable_values(values = [])
+      return [] unless overhead_configured?
+
+      billable_field = TimeEntryActivity.billable_custom_field
+      if billable_field
+        finder = ARCondition.new
+        finder.add "#{CustomValue.table_name}.customized_type = '#{TimeEntryActivity.class_name}'"
+        finder.add ["#{CustomValue.table_name}.custom_field_id = ?", billable_field.id]
+        finder.add ["#{CustomValue.table_name}.value IN (?)", values]
+        
+        return TimeEntryActivity.find(:all, :include => :custom_values, :conditions => finder.conditions)
+      else
+        return []
+      end
+    end
   end
   
   module InstanceMethods

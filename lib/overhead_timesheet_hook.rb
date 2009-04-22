@@ -41,4 +41,11 @@ class OverheadTimesheetHook < Redmine::Hook::ViewListener
                                 :selected_values => selected_values
                               })
   end
+
+  def plugin_timesheet_controller_report_pre_fetch_time_entries(context = {})
+    if context[:params] && context[:params][:timesheet] && context[:params][:timesheet][:billable]
+      activities = TimeEntryActivity.find_with_billable_values(context[:params][:timesheet][:billable])
+      context[:timesheet].activities = activities.collect(&:id) unless activities.empty?
+    end
+  end
 end

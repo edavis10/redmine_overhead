@@ -96,3 +96,47 @@ describe OverheadTimesheetHook, "#plugin_timesheet_views_timesheet_form", :type 
     
   end
 end
+
+describe OverheadTimesheetHook, "#plugin_timesheet_controller_report_pre_fetch_time_entries", :type => :view do
+  include Redmine::Hook::Helper
+
+  before(:each) do
+    stub_view_to_use_controller_instance
+    @timesheet = Timesheet.new
+  end
+  
+  it 'should do nothing to the activity list if no billable values are submitted' do
+    @timesheet.should_not_receive(:activities=)
+    context = {:timesheet => @timesheet}
+    call_hook(:plugin_timesheet_controller_report_pre_fetch_time_entries, context)
+  end
+
+  
+  it 'should change the activity list based on the values submitted' do
+    custom_field = mock_model(TimeEntryActivityCustomField,
+                               :possible_values => ['A','B','Nil'],
+                               :field_format => 'list')
+    TimeEntryActivity.stub!(:billable_custom_field).and_return(custom_field)
+
+    activities = [
+                  mock_model(TimeEntryActivity, :id => 100),
+                  mock_model(TimeEntryActivity, :id => 201),
+                  mock_model(TimeEntryActivity, :id => 342)
+                  ]
+    
+    TimeEntryActivity.should_receive(:find_with_billable_values).with(['A','Nil']).and_return(activities)    
+    
+    @timesheet.should_receive(:activities=).with([100,201,342])
+    context = {
+      :timesheet => @timesheet,
+      :params =>
+      {
+        :timesheet => {
+          :billable => ['A','Nil']
+        }
+      }
+    }
+    call_hook(:plugin_timesheet_controller_report_pre_fetch_time_entries, context)
+
+  end
+end
