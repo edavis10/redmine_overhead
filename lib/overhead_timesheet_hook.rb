@@ -12,7 +12,7 @@ class OverheadTimesheetHook < Redmine::Hook::ViewListener
   def plugin_timesheet_views_timesheet_time_entry(context={})
     time_entry = context[:time_entry]
     if time_entry && time_entry.billable? 
-      content_tag(:td, image_tag('true.png'))
+      content_tag(:td, image_tag('true.png'), :style => "text-align:center;")
     else 
       content_tag(:td,'') 
     end 
