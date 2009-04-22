@@ -6,6 +6,12 @@ describe OverheadTimesheetHook, "#plugin_timesheet_views_timesheet_group_header"
   end
 end
 
+describe OverheadTimesheetHook, "#plugin_timesheet_views_timesheet_time_entry_sum" do
+  it 'should add an empty column to the table' do
+    OverheadTimesheetHook.instance.plugin_timesheet_views_timesheet_time_entry_sum.should eql('<td></td>')
+  end
+end
+
 describe OverheadTimesheetHook, "#plugin_timesheet_views_timesheet_time_entry" do
   before(:each) do
   end

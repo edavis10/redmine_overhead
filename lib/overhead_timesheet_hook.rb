@@ -4,6 +4,11 @@ class OverheadTimesheetHook < Redmine::Hook::ViewListener
     return content_tag(:th, l(:overhead_field_billable))
   end
 
+  def plugin_timesheet_views_timesheet_time_entry_sum(context={})
+    return content_tag(:td, '')
+  end
+  
+
   def plugin_timesheet_views_timesheet_time_entry(context={})
     time_entry = context[:time_entry]
     if time_entry && time_entry.billable? 
