@@ -77,5 +77,22 @@ describe OverheadTimesheetHook, "#plugin_timesheet_views_timesheet_form", :type 
     end
   end
   
-  it 'should pre-select the values from the submission'
+  it 'should pre-select the values from the submission' do
+    @custom_field = mock_model(TimeEntryActivityCustomField,
+                               :possible_values => ['A','B','Nil'],
+                               :field_format => 'list')
+    TimeEntryActivity.stub!(:billable_custom_field).and_return(@custom_field)
+
+    context = {
+      :params => {:timesheet => {:billable => ['A','Nil']}}
+    }
+
+    response = call_hook(:plugin_timesheet_views_timesheet_form, context)
+    response.should have_tag('select') do
+      with_tag('option[value=?][selected=selected]','A','A')
+      with_tag('option[value=?]','B','B')
+      with_tag('option[value=?][selected=selected]','Nil','none')
+    end
+    
+  end
 end

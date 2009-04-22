@@ -4,7 +4,7 @@
   </label>
   <br />
   <%= select_tag('timesheet[billable][]',
-                 options_for_select(billable_values),
+                 options_for_select(billable_values, selected_values),
                  {:multiple => true, :size => list_size}) %>
 
 </p>
