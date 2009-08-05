@@ -32,7 +32,7 @@ describe OverheadIssueHook, "#view_issues_show_details_bottom with the budget di
     stub_view_to_use_controller_instance
     @project = mock_model(Project)
     @project.should_receive(:module_enabled?).at_least(:once).with('budget_module').and_return(true)
-    @issue = mock_model(Issue, :project => @project, :deliverable => nil, :billable_time_spent => nil)
+    @issue = mock_model(Issue, :project => @project, :deliverable => nil, :billable_time_spent => nil, :overhead_time_spent => nil)
     
     @context = {
       :project => @project,
@@ -51,5 +51,14 @@ describe OverheadIssueHook, "#view_issues_show_details_bottom with the budget di
   it 'should display the number of billable hours' do
     @issue.should_receive(:billable_time_spent).and_return(2.0)
     call_hook(:view_issues_show_details_bottom, @context).should have_tag('td','2.00 hours')
+  end
+
+  it 'should display a label for the overhead time' do
+    call_hook(:view_issues_show_details_bottom, @context).should have_tag('td.overhead-hours','Overhead time:')
+  end
+  
+  it 'should display the number of overhead hours' do
+    @issue.should_receive(:overhead_time_spent).and_return(12.0)
+    call_hook(:view_issues_show_details_bottom, @context).should have_tag('td','12.00 hours')
   end
 end
