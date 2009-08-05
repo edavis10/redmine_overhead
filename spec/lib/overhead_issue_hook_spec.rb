@@ -10,28 +10,8 @@ describe OverheadIssueHook, "#view_issues_show_details_bottom with the budget di
 
   before(:each) do
     stub_view_to_use_controller_instance
-  end
-
-  it 'should return nothing' do
-    project = mock_model(Project)
-    project.should_receive(:module_enabled?).at_least(:once).with('budget_module').and_return(false)
-
-    context = {
-      :project => project,
-      :issue => mock_model(Issue, :project => project, :deliverable => nil)
-    }
-
-    call_hook(:view_issues_show_details_bottom, context).strip.should eql('')
-  end
-end
-
-describe OverheadIssueHook, "#view_issues_show_details_bottom with the budget disabled", :type => :view do
-  include Redmine::Hook::Helper
-
-  before(:each) do
-    stub_view_to_use_controller_instance
     @project = mock_model(Project)
-    @project.should_receive(:module_enabled?).at_least(:once).with('budget_module').and_return(true)
+    @project.stub!(:module_enabled?).and_return(true)
     @issue = mock_model(Issue, :project => @project, :deliverable => nil, :billable_time_spent => nil, :overhead_time_spent => nil)
     
     @context = {
