@@ -12,9 +12,9 @@ class OverheadBudgetHook < Redmine::Hook::ViewListener
       if allowed_management?
         return content_tag(:td, number_to_currency(context[:deliverable].overhead_spent, :precision => 0))
       end
-    else
-      return content_tag(:td, '')
     end
+
+    return content_tag(:td, '')
   end
 
   def plugin_budget_view_deliverable_details_row(context={})
