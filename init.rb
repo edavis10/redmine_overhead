@@ -12,6 +12,7 @@ Dispatcher.to_prepare do
 end
 
 require 'overhead_timesheet_hook'
+require 'overhead_budget_hook'
 
 Redmine::Plugin.register :redmine_overhead do
   name 'Overhead plugin'
