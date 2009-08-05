@@ -13,8 +13,9 @@ Dispatcher.to_prepare do
   TimeEntryActivity.send(:include, OverheadTimeEntryActivityPatch)
 end
 
-require 'overhead_timesheet_hook'
 require 'overhead_budget_hook'
+require 'overhead_issue_hook'
+require 'overhead_timesheet_hook'
 
 Redmine::Plugin.register :redmine_overhead do
   name 'Overhead plugin'
