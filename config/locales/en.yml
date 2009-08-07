@@ -3,6 +3,8 @@ en:
   overhead_field_billable_value: Billable Value
   overhead_field_overhead_value: Overhead Value
   overhead_field_billable: Billable
+  overhead_field_overhead: Overhead
+  overhead_field_total: Total
   overhead_budget_spent: Overhead Spent
   overhead_billable_time: Billable time
   overhead_overhead_time: Overhead time
