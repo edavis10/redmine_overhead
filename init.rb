@@ -3,11 +3,15 @@ require 'redmine'
 # Patches to the Redmine core.
 require 'dispatcher'
 require 'overhead_deliverable_patch'
+require 'overhead_hourly_deliverable_patch'
+require 'overhead_fixed_deliverable_patch'
 require 'overhead_issue_patch'
 require 'overhead_time_entry_patch'
 require 'overhead_time_entry_activity_patch'
 Dispatcher.to_prepare do
   Deliverable.send(:include, OverheadDeliverablePatch)
+  HourlyDeliverable.send(:include, OverheadHourlyDeliverablePatch)
+  FixedDeliverable.send(:include, OverheadFixedDeliverablePatch)
   Issue.send(:include, OverheadIssuePatch)
   TimeEntry.send(:include, OverheadTimeEntryPatch)
   TimeEntryActivity.send(:include, OverheadTimeEntryActivityPatch)
