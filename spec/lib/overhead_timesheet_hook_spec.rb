@@ -1,4 +1,8 @@
 require File.dirname(__FILE__) + '/../spec_helper'
+# For assert_select
+require 'action_controller'
+require 'action_controller/assertions/selector_assertions'
+include ActionController::Assertions::SelectorAssertions
 
 # Hack to make RSpec play nicely with call_hook's default contexts
 def stub_view_to_use_controller_instance
