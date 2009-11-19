@@ -21,6 +21,20 @@ class OverheadTimesheetHook < Redmine::Hook::ViewListener
     end 
   end
 
+  def plugin_timesheet_model_timesheet_csv_header(context={})
+    context[:csv_data] << l(:overhead_field_billable)
+  end
+
+  def plugin_timesheet_model_timesheet_time_entry_to_csv(context={})
+    if context[:time_entry]
+      if context[:time_entry].billable?
+        context[:csv_data] << l(:overhead_field_billable)
+      else
+        context[:csv_data] << l(:overhead_field_overhead)
+      end
+    end
+  end
+
   # Added a new field for filtering based on "billable?"
   def plugin_timesheet_views_timesheet_form(context={})
     if context[:params] &&

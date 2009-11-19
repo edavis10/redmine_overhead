@@ -50,6 +50,54 @@ describe OverheadTimesheetHook, "#plugin_timesheet_views_timesheet_time_entry" d
   end
 end
 
+describe OverheadTimesheetHook, "#plugin_timesheet_model_timesheet_csv_header" do
+
+  def call_hook(context)
+    OverheadTimesheetHook.instance.plugin_timesheet_model_timesheet_csv_header(context)
+  end
+
+  it 'should add a Billable field' do
+    @csv_data = []
+    call_hook(:csv_data => @csv_data)
+    @csv_data.should have(1).item
+    @csv_data[0].should eql('Billable')
+  end
+end
+
+describe OverheadTimesheetHook, "#plugin_timesheet_model_timesheet_time_entry_to_csv" do
+
+  def call_hook(context)
+    OverheadTimesheetHook.instance.plugin_timesheet_model_timesheet_time_entry_to_csv(context)
+  end
+
+  describe 'with no time entry' do
+    it 'should change nothing' do
+      @csv_data = []
+      call_hook(:csv_data => @csv_data, :time_entry => nil)
+      @csv_data.should have(0).items
+    end
+  end
+
+  describe 'with a billable time entry' do
+    it 'should add "Billable" to the csv_data' do
+      @csv_data = []
+      call_hook(:csv_data => @csv_data, :time_entry => mock_model(TimeEntry, :billable? => true))
+      @csv_data.should have(1).item
+      @csv_data[0].should eql('Billable')
+    end
+  end
+  
+  describe 'with a non-billable time entry' do
+    it 'should add "Overhead" to the csv_data' do
+      @csv_data = []
+      call_hook(:csv_data => @csv_data, :time_entry => mock_model(TimeEntry, :billable? => false))
+      @csv_data.should have(1).item
+      @csv_data[0].should eql('Overhead')
+    end
+  end
+  
+end
+
 describe OverheadTimesheetHook, "#plugin_timesheet_views_timesheet_form", :type => :view do
   include Redmine::Hook::Helper
 
