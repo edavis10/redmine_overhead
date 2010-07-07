@@ -1,6 +1,3 @@
-require_dependency 'deliverable'
-require_dependency 'hourly_deliverable'
-
 module OverheadHourlyDeliverablePatch
   def self.included(base)
     base.send(:include, InstanceMethods)

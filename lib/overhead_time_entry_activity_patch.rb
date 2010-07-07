@@ -1,5 +1,3 @@
-require_dependency 'time_entry_activity'
-
 module OverheadTimeEntryActivityPatch
   def self.included(base)
     base.extend(ClassMethods)

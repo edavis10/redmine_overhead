@@ -1,5 +1,3 @@
-require_dependency 'issue'
-
 module OverheadIssuePatch
   def self.included(base)
     base.send(:include, InstanceMethods)

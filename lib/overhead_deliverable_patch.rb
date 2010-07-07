@@ -1,5 +1,3 @@
-require_dependency 'deliverable'
-
 module OverheadDeliverablePatch
   def self.included(base)
     base.send(:include, InstanceMethods)
