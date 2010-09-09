@@ -10,7 +10,7 @@ module OverheadHourlyDeliverablePatch
   module InstanceMethods
     # Amount of "billable" money spent on issues.  Similar to +spent+
     # but only billable time.
-    def labor_budget_spent
+    def labor_budget_spent(date=nil)
       return 0.0 unless self.issues.size > 0
       total = 0.0
     

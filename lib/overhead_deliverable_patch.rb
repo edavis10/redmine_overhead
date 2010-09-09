@@ -9,7 +9,7 @@ module OverheadDeliverablePatch
 
   module InstanceMethods
     # Cost of time logged to overhead activities
-    def overhead_spent
+    def overhead_spent(date=nil)
       time_logs = issues.collect(&:time_entries).flatten
 
       return time_logs.collect {|time_entry|
