@@ -24,11 +24,8 @@ module OverheadIssuePatch
         sum += time_entry.hours if time_entry.billable? == billable_flag
         sum
       }
-      if time > 0
-        return time.round(1)
-      else
-        return 0
-      end
+      return 0 if time <= 0
+      return time
 
     end
   end
