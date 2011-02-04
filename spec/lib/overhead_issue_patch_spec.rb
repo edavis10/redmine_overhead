@@ -25,13 +25,13 @@ describe Issue, '#billable_time_spent' do
     issue.billable_time_spent.should eql(25.0)
   end
 
-  it 'should round to the tenths place' do
+  it 'should not round' do
     time_entries = [mock_time_entry(20, true),
-                    mock_time_entry(13.333333, true)]
+                    mock_time_entry(13.333, true)]
     
     issue = Issue.new
     issue.should_receive(:time_entries).and_return(time_entries)
-    issue.billable_time_spent.should eql(33.3)
+    issue.billable_time_spent.should eql(33.333)
 
   end
 
@@ -62,13 +62,13 @@ describe Issue, '#overhead_time_spent' do
     issue.overhead_time_spent.should eql(60.0)
   end
 
-  it 'should round to the tenths place' do
+  it 'should not round' do
     time_entries = [mock_time_entry(20, false),
-                    mock_time_entry(13.333333, false)]
+                    mock_time_entry(13.333, false)]
     
     issue = Issue.new
     issue.should_receive(:time_entries).and_return(time_entries)
-    issue.overhead_time_spent.should eql(33.3)
+    issue.overhead_time_spent.should eql(33.333)
 
   end
 
