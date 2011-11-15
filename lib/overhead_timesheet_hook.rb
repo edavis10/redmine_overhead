@@ -59,14 +59,18 @@ class OverheadTimesheetHook < Redmine::Hook::ViewListener
       billable_options = context[:params][:timesheet][:billable]
       activities = []
 
-      if billable_options.include?("billable")
-        activities << TimeEntryActivity.find_billable_activities
+      if billable_options.include?("billable") && context[:timesheet].projects.present?
+        context[:timesheet].projects.each do |project|
+          activities << project.billable_activities
+        end
       end
 
-      if billable_options.include?("overhead")
-        activities << TimeEntryActivity.find_overhead_activities
+      if billable_options.include?("overhead") && context[:timesheet].projects.present?
+        context[:timesheet].projects.each do |project|
+          activities << project.non_billable_activities
+        end
       end
-
+      # Overrides the activities directly
       context[:timesheet].activities = activities.flatten.uniq.compact.collect(&:id).sort unless activities.empty?
     end
   end
