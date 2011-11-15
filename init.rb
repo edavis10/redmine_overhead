@@ -23,6 +23,8 @@ Dispatcher.to_prepare do
   require_dependency 'enumeration'
   require_dependency 'time_entry_activity'
   TimeEntryActivity.send(:include, OverheadTimeEntryActivityPatch)
+  require_dependency 'project'
+  Project.send(:include, RedmineOverhead::Patches::ProjectPatch)
 end
 
 require 'overhead_budget_hook'
